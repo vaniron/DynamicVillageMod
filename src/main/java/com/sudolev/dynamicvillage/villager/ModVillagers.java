@@ -7,15 +7,15 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.ai.village.poi.PoiType;
 import net.minecraft.world.entity.npc.VillagerProfession;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
-
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class ModVillagers {
+    private static final Logger LOGGER = LogManager.getLogger();
+
     public static final DeferredRegister<PoiType> POI_TYPES =
             DeferredRegister.create(ForgeRegistries.POI_TYPES, VillageLife.MODID);
     public static final DeferredRegister<VillagerProfession> VILLAGER_PROFESSIONS =
@@ -53,15 +53,12 @@ public class ModVillagers {
                     SoundEvents.VILLAGER_WORK_MASON));
 
     public static void registerPOIs() {
-        try {
-            Method registerBlockStatesMethod = ObfuscationReflectionHelper.findMethod(PoiType.class, "registerBlockStates", PoiType.class);
-            registerBlockStatesMethod.invoke(null, CREATE_ENGINEER_POI.get());
-            registerBlockStatesMethod.invoke(null, CREATE_HYDRAULIC_ENGINEER_POI.get());
-            registerBlockStatesMethod.invoke(null, CREATE_MECHANIC_POI.get());
-            registerBlockStatesMethod.invoke(null, CREATE_MINER_POI.get());
-        } catch (InvocationTargetException | IllegalAccessException | ObfuscationReflectionHelper.UnableToFindMethodException exception) {
-            exception.printStackTrace();
-        }
+        // Log confirmation that POIs are initialized (block states are handled by PoiType constructor)
+        LOGGER.info("Registering DynamicVillage POIs for villager professions:");
+        LOGGER.info(" - Mechanical Engineer POI: {}", CREATE_ENGINEER_POI.getId());
+        LOGGER.info(" - Hydraulic Engineer POI: {}", CREATE_HYDRAULIC_ENGINEER_POI.getId());
+        LOGGER.info(" - Train Mechanic POI: {}", CREATE_MECHANIC_POI.getId());
+        LOGGER.info(" - Miner POI: {}", CREATE_MINER_POI.getId());
     }
 
     public static void register(IEventBus eventBus) {
